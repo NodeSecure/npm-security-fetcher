@@ -1,0 +1,34 @@
+{
+  "name": "npm-security-fetcher",
+  "version": "1.0.0",
+  "description": "Fetch packages from npm for Security purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fraxken/npm-security-fetcher.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fraxken/npm-security-fetcher/issues"
+  },
+  "homepage": "https://github.com/fraxken/npm-security-fetcher#readme",
+  "devDependencies": {
+    "@slimio/eslint-config": "^4.1.0"
+  },
+  "dependencies": {
+    "@slimio/is": "^1.5.1",
+    "@slimio/lock": "^0.5.0",
+    "@slimio/npm-registry": "^0.6.0",
+    "dotenv": "^8.2.0",
+    "httpie": "^2.0.0-next.10",
+    "is-minified-code": "^2.0.0",
+    "js-x-ray": "^2.0.3",
+    "klona": "^2.0.3",
+    "pacote": "^11.1.11"
+  }
+}
