@@ -1,13 +1,11 @@
-"use strict";
-
 // Require Node.js Dependencies
-const os = require("os");
-const { extname, join, relative } = require("path");
-const { spawnSync } = require("child_process");
-const { stat, opendir, rmdir } = require("fs").promises;
+import os from "os";
+import { extname, join, relative } from "path";
+import { spawnSync } from "child_process";
+import { stat, opendir, rmdir } from "fs/promises";
 
 // Require Third-party Dependencies
-const pacote = require("pacote");
+import pacote from "pacote";
 
 // SYMBOLS
 const SYM_FILE = Symbol("symTypeFile");
@@ -21,7 +19,7 @@ const kDefaultNPMRegistryAddr = "https://registry.npmjs.org/";
 // VARS
 let localNPMRegistry = null;
 
-async function* getFilesRecursive(dir) {
+export async function* getFilesRecursive(dir) {
     const dirents = await opendir(dir);
 
     for await (const dirent of dirents) {
@@ -40,7 +38,7 @@ async function* getFilesRecursive(dir) {
     }
 }
 
-async function getTarballComposition(tarballDir) {
+export async function getTarballComposition(tarballDir) {
     const ext = new Set();
     const files = [];
     const dirs = [];
@@ -69,14 +67,10 @@ async function getTarballComposition(tarballDir) {
         // ignore
     }
 
-    return {
-        ext,
-        size,
-        files: files.map((path) => relative(tarballDir, path))
-    };
+    return { ext, size, files };
 }
 
-function getRegistryURL(force = false) {
+export function getRegistryURL(force = false) {
     if (localNPMRegistry !== null && !force) {
         return localNPMRegistry;
     }
@@ -93,7 +87,7 @@ function getRegistryURL(force = false) {
     }
 }
 
-async function fetchPackage(packageExpr, dest) {
+export async function fetchPackage(packageExpr, dest) {
     await rmdir(dest, { recursive: true });
     await pacote.extract(packageExpr, dest, {
         ...kNpmToken,
@@ -103,13 +97,7 @@ async function fetchPackage(packageExpr, dest) {
     await new Promise((resolve) => setImmediate(resolve));
 }
 
-module.exports = {
-    getFilesRecursive,
-    getRegistryURL,
-    getTarballComposition,
-    fetchPackage,
-    constants: Object.freeze({
-        FILE: SYM_FILE,
-        DIRECTORY: SYM_DIR
-    })
-};
+export const constants = Object.freeze({
+    FILE: SYM_FILE,
+    DIRECTORY: SYM_DIR
+});

@@ -1,21 +1,19 @@
-"use strict";
-
 // Require Node.js Dependencies
-const os = require("os");
-const fs = require("fs").promises;
-const path = require("path");
-const { on, EventEmitter } = require("events");
+import os from "os";
+import fs from "fs/promises";
+import path from "path";
+import { on, EventEmitter } from "events";
 
 // Require Third-party Dependencies
-const NPMRegistry = require("@slimio/npm-registry");
-const { klona } = require("klona");
-const is = require("@slimio/is");
-const Locker = require("@slimio/lock");
-const isMinified = require("is-minified-code");
-const { runASTAnalysis } = require("js-x-ray");
+import NPMRegistry from "@slimio/npm-registry";
+import { klona } from "klona/json";
+import is from "@slimio/is";
+import Locker from "@slimio/lock";
+import isMinified from "is-minified-code";
+import JSXRay from "js-x-ray";
 
 // Require Internal Dependencies
-const utils = require("./src/utils");
+import * as utils from "./src/utils.js";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -28,7 +26,7 @@ const kMaximumConcurrentDownload = 10;
 const npmReg = new NPMRegistry(utils.getRegistryURL());
 // (typeof process.env.NPM_TOKEN === "string" && npmReg.login(process.env.NPM_TOKEN));
 
-async function* SearchPackages(options = {}) {
+export async function* SearchPackages(options = {}) {
     const limit = Number(options.limit) || kDefaultLimit;
     const delay = Number(options.delay) || 0;
     const dataFetcher = is.func(options.dataFetcher) ? options.dataFetcher : kDefaultFetcher;
@@ -51,7 +49,7 @@ async function* SearchPackages(options = {}) {
     }
 }
 
-async function DownloadFromSource(source, ee, lock, tmpLocation) {
+export async function DownloadFromSource(source, ee, lock, tmpLocation) {
     try {
         for await (const packageExpr of source) {
             const free = await lock.acquireOne();
@@ -59,21 +57,21 @@ async function DownloadFromSource(source, ee, lock, tmpLocation) {
             setImmediate(() => {
                 const tmpPathLocation = path.join(tmpLocation, packageExpr);
                 utils.fetchPackage(packageExpr, tmpPathLocation)
-                .then(() => {
-                        ee.emit("row", { done: false, value: { name: packageExpr, location: tmpPathLocation } });
+                    .then(() => {
+                        ee.emit("row", { done: false, value: { name: packageExpr, location: tmpPathLocation, root: tmpLocation } });
                         free();
                     })
                     .catch(console.error);
             });
         }
-        ee.emit("row", { done: true })
+        ee.emit("row", { done: true });
     }
-    catch(error) {
+    catch (error) {
         ee.emit("row", { done: true, error });
     }
 }
 
-async function* DownloadRegistryPackage(source, options = {}) {
+export async function* DownloadRegistryPackage(source, options = {}) {
     const maxConcurrent = Number(options.maxConcurrent) || kMaximumConcurrentDownload;
     const lock = new Locker({ maxConcurrent });
     const ee = new EventEmitter();
@@ -101,19 +99,14 @@ async function* DownloadRegistryPackage(source, options = {}) {
     }
 }
 
-async function AnalyseJavaScriptFile(fileLocation) {
+export async function AnalyseJavaScriptFile(fileLocation) {
     const str = await fs.readFile(fileLocation, "utf-8");
     const isMin = path.basename(fileLocation).includes(".min") || isMinified(str);
 
-    return runASTAnalysis(str, { isMinified: isMin });
+    return JSXRay.runASTAnalysis(str, { isMinified: isMin });
 }
 
-module.exports = {
-    SearchPackages,
-    DownloadRegistryPackage,
-    AnalyseJavaScriptFile,
-    Utils: {
-        getTarballComposition: utils.getTarballComposition,
-        getFilesRecursive: utils.getFilesRecursive
-    }
-};
+export const Utils = {
+    getTarballComposition: utils.getTarballComposition,
+    getFilesRecursive: utils.getFilesRecursive
+}

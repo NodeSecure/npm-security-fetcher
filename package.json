@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Fetch packages from npm for Security purposes",
   "main": "index.js",
+  "type": "module",
+  "bin": {
+    "nsf": "./bin/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,10 +29,16 @@
     "@slimio/lock": "^0.5.0",
     "@slimio/npm-registry": "^0.6.0",
     "dotenv": "^8.2.0",
+    "filenamify": "^4.1.0",
     "httpie": "^2.0.0-next.10",
     "is-minified-code": "^2.0.0",
     "js-x-ray": "^2.0.3",
+    "kleur": "^4.1.1",
     "klona": "^2.0.3",
-    "pacote": "^11.1.11"
+    "make-promises-safe": "^5.1.0",
+    "ms": "^2.1.2",
+    "pacote": "^11.1.11",
+    "qoa": "^0.2.0",
+    "sade": "^1.7.3"
   }
 }
