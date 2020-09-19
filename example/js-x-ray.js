@@ -21,6 +21,7 @@ export async function init() {
 
     const analysisDir = path.join(baseDir, "packages");
     const errorDir = path.join(baseDir, "parsing-errors");
+    await fs.mkdir(analysisDir, { recursive: true });
     await fs.mkdir(errorDir, { recursive: true });
 
     return { analysisDir, errorDir };
@@ -32,48 +33,58 @@ export async function close() {
 
 export async function run(ctx, { name, location, root }) {
     try {
-        const packageAnalysisDir = path.join(ctx.analysisDir, name);
-        await fs.mkdir(packageAnalysisDir, { recursive: true });
         console.log(`handle package name: ${name}, count: ${count++}`);
-
         const { files } = await Utils.getTarballComposition(location);
         const jsFiles = files.filter((name) => kJavaScriptExtensions.has(path.extname(name)));
         const toWait = [];
 
         for (const file of jsFiles) {
             const cleanName = filenamify(path.relative(root, file).slice(name.length), { replacement: kDefaultReplacement });
-            toWait.push(runASTAnalysis(ctx, cleanName, packageAnalysisDir, file));
+            toWait.push(runASTAnalysis(ctx, cleanName, file, name));
         }
 
-        await Promise.allSettled(toWait);
+        const results = (await Promise.allSettled(toWait))
+            .filter(({ status }) => status === "fulfilled")
+            .map(({ value }) => value);
+
+        const content = JSON.stringify(Object.assign({}, ...results), null, kJSONSpace);
+
+        const fileName = path.join(ctx.analysisDir, name.replace(/\//g, "__")) + ".json";
+        await fs.writeFile(fileName, content);
     }
     finally {
         await fs.rmdir(location, { recursive: true });
     }
 }
 
-async function dumpParsingError(ctx, error, cleanName) {
-    const dumpStr = JSON.stringify({
-        code: error.code || null,
-        message: typeof error === "string" ? error : error.message || "",
-        stack: error.stack ? error.stack.split("\n") : ""
-    }, null, kJSONSpace);
+async function dumpParsingError(ctx, error, cleanName, pkgName) {
+    try {
+        const dumpStr = JSON.stringify({
+            pkgName,
+            code: error.code || null,
+            message: typeof error === "string" ? error : error.message || "",
+            stack: error.stack ? error.stack.split("\n") : ""
+        }, null, kJSONSpace);
 
-    await fs.writeFile(path.join(ctx.errorDir, `${cleanName}.json`), dumpStr);
+        await fs.writeFile(path.join(ctx.errorDir, `${cleanName}.json`), dumpStr);
+    }
+    catch {
+        // ignore
+    }
 }
 
-// eslint-disable-next-line max-params
-async function runASTAnalysis(ctx, cleanName, baseNameDir, location) {
+async function runASTAnalysis(ctx, cleanName, location, pkgName) {
     try {
         const ASTAnalysis = await AnalyseJavaScriptFile(location);
-        const filePath = path.join(baseNameDir, `${cleanName}.json`);
 
-        await fs.writeFile(filePath, JSON.stringify(ASTAnalysis, null, kJSONSpace));
+        return { [cleanName]: ASTAnalysis };
     }
     catch (error) {
         if (error.name === "SyntaxError") {
-            return;
+            return {};
         }
-        await dumpParsingError(ctx, error, cleanName);
+        await dumpParsingError(ctx, error, cleanName, pkgName);
+
+        return {};
     }
 }

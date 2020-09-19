@@ -21,7 +21,7 @@ console.log(colors.gray(`\n > executing npm-security-fetch at: ${colors.yellow(p
 
 prog
     .command("npm <file>")
-    .describe("TBC")
+    .describe("Run NPM Security fetched with a given javascript file!")
     .action(npm);
 
 prog.parse(process.argv);

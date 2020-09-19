@@ -6,6 +6,7 @@
     "rules": {
         "jsdoc/require-jsdoc": "off",
         "lines-between-class-members": "off",
-        "new-cap": "off"
+        "new-cap": "off",
+        "max-params": "off"
     }
 }
