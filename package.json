@@ -14,9 +14,14 @@
     "type": "git",
     "url": "git+https://github.com/fraxken/npm-security-fetcher.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+      "npm",
+      "security",
+      "fetcher",
+      "analyser"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fraxken/npm-security-fetcher/issues"
   },

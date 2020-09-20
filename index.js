@@ -20,7 +20,7 @@ const kRegSearchLimit = 10;
 const kDefaultCriteria = { popularity: 1 };
 const kDefaultLimit = 500;
 const kDefaultFetcher = (raw) => `${raw.package.name}@${raw.package.version}`;
-const kMaximumConcurrentDownload = 10;
+const kMaximumConcurrentDownload = 5;
 
 // VARS
 const npmReg = new NPMRegistry(utils.getRegistryURL());

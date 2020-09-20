@@ -76,8 +76,14 @@ async function dumpParsingError(ctx, error, cleanName, pkgName) {
 async function runASTAnalysis(ctx, cleanName, location, pkgName) {
     try {
         const ASTAnalysis = await AnalyseJavaScriptFile(location);
+        const deps = [...ASTAnalysis.dependencies];
+        const warnings = ASTAnalysis.warnings.map((warn) => {
+            delete warn.location;
 
-        return { [cleanName]: ASTAnalysis };
+            return warn;
+        });
+
+        return { [cleanName]: { warnings, deps } };
     }
     catch (error) {
         if (error.name === "SyntaxError") {

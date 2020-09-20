@@ -22,19 +22,28 @@ console.log(colors.gray(`\n > executing npm-security-fetch at: ${colors.yellow(p
 prog
     .command("npm <file>")
     .describe("Run NPM Security fetched with a given javascript file!")
+    .option("-l, --limit", "limit of packages to fetch!", 500)
+    .option("-m, --max", "maximum concurrent download", 5)
     .action(npm);
 
 prog.parse(process.argv);
 
-async function npm(file)  {
+async function npm(file, cmdOptions)  {
     const filePath = pathToFileURL(path.join(process.cwd(), file));
     const { init, run, close } = await import(filePath);
+    const searchOptions = {
+        limit: cmdOptions.limit
+    };
+    const downloadOptions = {
+        maxConcurrent: cmdOptions.max
+    };
 
     const ctx = await init();
-    const topLock = new Locker({ maxConcurrent: 30 });
+    const topLock = new Locker({ maxConcurrent: 10 });
 
     try {
-        for await (const data of DownloadRegistryPackage(SearchPackages())) {
+        const searchIterator = SearchPackages(searchOptions);
+        for await (const data of DownloadRegistryPackage(searchIterator, downloadOptions)) {
             const free = await topLock.acquireOne();
             run(ctx, data).catch(console.error).finally(free);
         }
