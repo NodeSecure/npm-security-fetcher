@@ -1,8 +1,30 @@
-# npm-security-fetcher
-Fetch packages from npm for Security purposes
+<p align="center"><h1 align="center">
+  NPM Security Fetcher (WIP)
+</h1>
+
+<p align="center">
+  a Node.js CLI created to simplify the analysis of npm registry packages.
+</p>
+
+<p align="center">
+    <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/package-json/v/fraxken/npm-security-fetcher?style=flat-square" alt="npm version"></a>
+    <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/license/fraxken/npm-security-fetcher?style=flat-square" alt="license"></a>
+    <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg?style=flat-square" alt="Responsible Disclosure Policy" /></a>
+</p>
+
+## About
+
+I personally created this project to analyze npm packages by various criteria (popularity etc). Most researchers re-create the same codes over and over again and I thought it might be nice to have a CLI and various methods to simplify our lives.
+
+## Features
+
+- Pull packages from the npm registry by divers criteria.
+- Offers you various methods to read and extract information from the npm tarball.
+- Include [js-x-ray](https://github.com/fraxken/js-x-ray) by default.
+- Functionalities can be extended
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) v12 or higher
+- [Node.js](https://nodejs.org/en/) v14 or higher
 
 ## Getting Started
 
@@ -12,7 +34,30 @@ This package is available in the Node Package Repository and can be easily insta
 $ npm i npm-security-fetcher -g
 ```
 
-Then create your javascript file:
+or
+
+```bash
+$ git clone https://github.com/fraxken/npm-security-fetcher.git
+$ cd npm-security-fetcher
+$ npm ci
+$ npm link
+```
+
+Then the **nsf** binary will be available in your terminal.
+
+```bash
+$ nsf --help
+```
+
+## Usage example
+
+The first step is to create a javascript file with three methods:
+- init (run before fetching and extracting packages from the npm registry).
+- run (called for each downloaded npm packages).
+- close (run at the end when there is no more packages to fetch).
+
+This script must use the latest Node.js ESM (it also support top-level-await).
+
 ```js
 import path from "path";
 
@@ -32,9 +77,14 @@ export async function run(ctx, { name, location, root }) {
 }
 ```
 
-And then run your script:
+> There is no restriction on the nature of the context.
+
+After editing your file you can run your script as follows
 ```bash
 $ nsf npm myfile.js
 ```
 
-Real example in the root directory `example`.
+The root folder **"example"** contains real world examples that are used (for js-x-ray etc).
+
+## License
+MIT
