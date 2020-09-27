@@ -37,7 +37,7 @@
     "filenamify": "^4.2.0",
     "httpie": "^2.0.0-next.11",
     "is-minified-code": "^2.0.0",
-    "js-x-ray": "^2.1.0",
+    "js-x-ray": "^2.2.0",
     "kleur": "^4.1.2",
     "klona": "^2.0.4",
     "make-promises-safe": "^5.1.0",

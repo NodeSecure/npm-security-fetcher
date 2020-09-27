@@ -77,11 +77,7 @@ async function runASTAnalysis(ctx, cleanName, location, pkgName) {
     try {
         const ASTAnalysis = await AnalyseJavaScriptFile(location);
         const deps = [...ASTAnalysis.dependencies];
-        const warnings = ASTAnalysis.warnings.map((warn) => {
-            delete warn.location;
-
-            return warn;
-        });
+        const warnings = ASTAnalysis.warnings;
 
         return { [cleanName]: { warnings, deps } };
     }

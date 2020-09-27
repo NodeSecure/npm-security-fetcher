@@ -39,7 +39,7 @@ async function npm(file, cmdOptions)  {
     };
 
     const ctx = await init();
-    const topLock = new Locker({ maxConcurrent: 10 });
+    const topLock = new Locker({ maxConcurrent: 20 });
 
     try {
         const searchIterator = SearchPackages(searchOptions);
