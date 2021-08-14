@@ -1,5 +1,5 @@
 {
-  "name": "npm-security-fetcher",
+  "name": "@nodesecure/npm-security-fetcher",
   "version": "1.0.0",
   "description": "Fetch packages from npm for Security purposes",
   "main": "index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fraxken/npm-security-fetcher.git"
+    "url": "git+https://github.com/NodeSecure/npm-security-fetcher.git"
   },
   "keywords": [
     "npm",
@@ -23,21 +23,21 @@
   "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fraxken/npm-security-fetcher/issues"
+    "url": "https://github.com/NodeSecure/npm-security-fetcher/issues"
   },
-  "homepage": "https://github.com/fraxken/npm-security-fetcher#readme",
+  "homepage": "https://github.com/NodeSecure/npm-security-fetcher#readme",
   "devDependencies": {
-    "@slimio/eslint-config": "^4.1.0"
+    "@nodesecure/eslint-config": "^1.2.0"
   },
   "dependencies": {
+    "@nodesecure/fs-walk": "^1.0.0",
+    "@nodesecure/js-x-ray": "^4.0.1",
+    "@nodesecure/npm-registry-sdk": "^1.1.2",
     "@slimio/is": "^1.5.1",
-    "@slimio/lock": "^0.5.0",
-    "@slimio/npm-registry": "^0.7.0",
+    "@slimio/lock": "^1.0.0",
     "dotenv": "^10.0.0",
     "filenamify": "^5.0.0",
-    "httpie": "^2.0.0-next.13",
     "is-minified-code": "^2.0.0",
-    "js-x-ray": "^3.2.0",
     "kleur": "^4.1.4",
     "klona": "^2.0.4",
     "make-promises-safe": "^5.1.0",

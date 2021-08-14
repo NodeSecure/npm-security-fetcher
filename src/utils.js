@@ -1,103 +1,54 @@
 // Require Node.js Dependencies
 import os from "os";
-import { extname, join, relative } from "path";
-import { spawnSync } from "child_process";
-import { stat, opendir, rmdir } from "fs/promises";
+import timers from "timers/promises";
+import fs from "fs/promises";
+import path from "path";
 
 // Require Third-party Dependencies
 import pacote from "pacote";
-
-// SYMBOLS
-const SYM_FILE = Symbol("symTypeFile");
-const SYM_DIR = Symbol("symTypeDir");
+import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
+import { walk } from "@nodesecure/fs-walk";
 
 // CONSTANTS
 const kNpmToken = typeof process.env.NPM_TOKEN === "string" ? { token: process.env.NPM_TOKEN } : {};
-const kExcludeDirectory = new Set(["node_modules", ".vscode", ".git"]);
-const kDefaultNPMRegistryAddr = "https://registry.npmjs.org/";
-
-// VARS
-let localNPMRegistry = null;
-
-export async function* getFilesRecursive(dir) {
-    const dirents = await opendir(dir);
-
-    for await (const dirent of dirents) {
-        if (kExcludeDirectory.has(dirent.name)) {
-            continue;
-        }
-
-        if (dirent.isFile()) {
-            yield [SYM_FILE, join(dir, dirent.name)];
-        }
-        else if (dirent.isDirectory()) {
-            const fullPath = join(dir, dirent.name);
-            yield [SYM_DIR, fullPath];
-            yield* getFilesRecursive(fullPath);
-        }
-    }
-}
 
 export async function getTarballComposition(tarballDir) {
-    const ext = new Set();
-    const files = [];
-    const dirs = [];
-    let { size } = await stat(tarballDir);
+  const ext = new Set();
+  const files = [];
+  const dirs = [];
+  let { size } = await fs.stat(tarballDir);
 
-    for await (const [kind, file] of getFilesRecursive(tarballDir)) {
-        switch (kind) {
-            case SYM_FILE:
-                ext.add(extname(file));
-                files.push(file);
-                break;
-            case SYM_DIR:
-                dirs.push(file);
-                break;
-        }
+  for await (const [dirent, file] of walk(tarballDir)) {
+    if (dirent.isFile()) {
+      ext.add(path.extname(file));
+      files.push(file);
     }
+    else if (dirent.isDirectory()) {
+      dirs.push(file);
+    }
+  }
 
-    try {
-        const sizeAll = await Promise.all([
-            ...files.map((file) => stat(file)),
-            ...dirs.map((file) => stat(file))
-        ]);
-        size += sizeAll.reduce((prev, curr) => prev + curr.size, 0);
-    }
-    catch (err) {
-        // ignore
-    }
+  try {
+    const sizeAll = await Promise.all([
+      ...files.map((file) => fs.stat(file)),
+      ...dirs.map((file) => fs.stat(file))
+    ]);
+    size += sizeAll.reduce((prev, curr) => prev + curr.size, 0);
+  }
+  catch (err) {
+    // ignore
+  }
 
-    return { ext, size, files };
-}
-
-export function getRegistryURL(force = false) {
-    if (localNPMRegistry !== null && !force) {
-        return localNPMRegistry;
-    }
-
-    try {
-        const stdout = spawnSync(
-            `npm${process.platform === "win32" ? ".cmd" : ""}`, ["config", "get", "registry"]).stdout.toString();
-        localNPMRegistry = stdout.trim() === "" ? kDefaultNPMRegistryAddr : stdout.trim();
-
-        return localNPMRegistry;
-    }
-    catch (error) {
-        return kDefaultNPMRegistryAddr;
-    }
+  return { ext, size, files };
 }
 
 export async function fetchPackage(packageExpr, dest) {
-    await rmdir(dest, { recursive: true });
-    await pacote.extract(packageExpr, dest, {
-        ...kNpmToken,
-        registry: getRegistryURL(),
-        cache: `${os.homedir()}/.npm`
-    });
-    await new Promise((resolve) => setImmediate(resolve));
-}
+  await fs.rm(dest, { recursive: true, force: true });
 
-export const constants = Object.freeze({
-    FILE: SYM_FILE,
-    DIRECTORY: SYM_DIR
-});
+  await pacote.extract(packageExpr, dest, {
+    ...kNpmToken,
+    registry: getLocalRegistryURL(),
+    cache: `${os.homedir()}/.npm`
+  });
+  await timers.setImmediate();
+}
