@@ -36,7 +36,7 @@
     "@slimio/is": "^1.5.1",
     "@slimio/lock": "^1.0.0",
     "dotenv": "^10.0.0",
-    "filenamify": "^5.0.0",
+    "filenamify": "^5.0.1",
     "is-minified-code": "^2.0.0",
     "kleur": "^4.1.4",
     "klona": "^2.0.4",
