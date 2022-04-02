@@ -1,11 +1,11 @@
-// Require Node.js Dependencies
-import os from "os";
-import fs from "fs/promises";
-import path from "path";
-import timers from "timers/promises";
-import { on, EventEmitter } from "events";
+// Import Node.js Dependencies
+import os from "node:os";
+import fs from "node:fs/promises";
+import path from "node:path";
+import timers from "node:timers/promises";
+import { on, EventEmitter } from "node:events";
 
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import { search } from "@nodesecure/npm-registry-sdk";
 import { klona } from "klona/json";
 import is from "@slimio/is";
@@ -13,8 +13,8 @@ import Locker from "@slimio/lock";
 import isMinified from "is-minified-code";
 import JSXRay from "js-x-ray";
 
-// Require Internal Dependencies
-import * as utils from "./src/utils.js";
+// Import Internal Dependencies
+import { fetchPackage, getTarballComposition } from "./src/utils.js";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -56,7 +56,7 @@ export async function DownloadFromSource(source, ee, lock, tmpLocation) {
 
       setImmediate(() => {
         const tmpPathLocation = path.join(tmpLocation, packageExpr);
-        utils.fetchPackage(packageExpr, tmpPathLocation)
+        fetchPackage(packageExpr, tmpPathLocation)
           .then(() => {
             ee.emit("row", { done: false, value: { name: packageExpr, location: tmpPathLocation, root: tmpLocation } });
             free();
@@ -107,5 +107,5 @@ export async function AnalyseJavaScriptFile(fileLocation) {
 }
 
 export const Utils = {
-  getTarballComposition: utils.getTarballComposition
+  getTarballComposition
 };

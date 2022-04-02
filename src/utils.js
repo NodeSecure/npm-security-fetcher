@@ -1,10 +1,10 @@
-// Require Node.js Dependencies
-import os from "os";
-import timers from "timers/promises";
-import fs from "fs/promises";
-import path from "path";
+// Import Node.js Dependencies
+import os from "node:os";
+import timers from "node:timers/promises";
+import fs from "node:s/promises";
+import path from "node:path";
 
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import pacote from "pacote";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import { walk } from "@nodesecure/fs-walk";
