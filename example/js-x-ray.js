@@ -1,13 +1,13 @@
 
 // Node.js
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 // Third-party
 import filenamify from "filenamify";
 
 // Internal
-import { AnalyseJavaScriptFile, Utils } from "../index.js";
+import { analyzeJavaScriptFile, Utils } from "../index.js";
 
 // CONSTANTS
 const kJavaScriptExtensions = new Set([".js", ".mjs", ".cjs"]);
@@ -75,7 +75,7 @@ async function dumpParsingError(ctx, error, cleanName, pkgName) {
 
 async function runASTAnalysis(ctx, cleanName, location, pkgName) {
   try {
-    const ASTAnalysis = await AnalyseJavaScriptFile(location);
+    const ASTAnalysis = await analyzeJavaScriptFile(location);
     const deps = [...ASTAnalysis.dependencies];
     const warnings = ASTAnalysis.warnings;
 

@@ -25,7 +25,7 @@ const kDefaultLimit = 500;
 const kDefaultFetcher = (raw) => `${raw.package.name}@${raw.package.version}`;
 const kMaximumConcurrentDownload = 5;
 
-export async function* SearchPackages(options = {}) {
+export async function* searchPackagesByCriteria(options = {}) {
   const limit = Number(options.limit) || kDefaultLimit;
   const delay = Number(options.delay) || 0;
   const dataFetcher = is.func(options.dataFetcher) ? options.dataFetcher : kDefaultFetcher;
@@ -49,7 +49,7 @@ export async function* SearchPackages(options = {}) {
 }
 
 // eslint-disable-next-line max-params
-export async function DownloadFromSource(source, ee, lock, tmpLocation) {
+export async function downloadFromSource(source, ee, lock, tmpLocation) {
   try {
     for await (const packageExpr of source) {
       const free = await lock.acquireOne();
@@ -71,14 +71,14 @@ export async function DownloadFromSource(source, ee, lock, tmpLocation) {
   }
 }
 
-export async function* DownloadRegistryPackage(source, options = {}) {
+export async function* downloadPackageOnRegistry(source, options = {}) {
   const maxConcurrent = Number(options.maxConcurrent) || kMaximumConcurrentDownload;
   const lock = new Locker({ maxConcurrent });
   const ee = new EventEmitter();
 
   // Create temporary directory
   const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
-  setImmediate(() => DownloadFromSource(source, ee, lock, tmpLocation));
+  setImmediate(() => downloadFromSource(source, ee, lock, tmpLocation));
 
   try {
     for await (const [data] of on(ee, "row")) {
@@ -99,7 +99,7 @@ export async function* DownloadRegistryPackage(source, options = {}) {
   }
 }
 
-export async function AnalyseJavaScriptFile(fileLocation) {
+export async function analyzeJavaScriptFile(fileLocation) {
   const str = await fs.readFile(fileLocation, "utf-8");
   const isMin = path.basename(fileLocation).includes(".min") || isMinified(str);
 
