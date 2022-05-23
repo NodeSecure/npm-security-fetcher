@@ -11,10 +11,10 @@ import { klona } from "klona/json";
 import is from "@slimio/is";
 import Locker from "@slimio/lock";
 import isMinified from "is-minified-code";
-import JSXRay from "js-x-ray";
+import JSXRay from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
-import { fetchPackage, getTarballComposition } from "./src/utils.js";
+import { fetchPackage, getTarballComposition } from "./src/utils";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -22,19 +22,37 @@ const kDefaultCriteria = { popularity: 1 };
 const kDefaultLimit = 500;
 
 // eslint-disable-next-line func-style
-const kDefaultFetcher = (raw) => `${raw.package.name}@${raw.package.version}`;
+const kDefaultFetcher = (raw: { package: { name: string; version: number } }) =>
+  `${raw.package.name}@${raw.package.version}`;
 const kMaximumConcurrentDownload = 5;
 
-export async function* searchPackagesByCriteria(options = {}) {
+type searchPackagesByCriteriaOptions = {
+  limit?: string;
+  delay?: string;
+  dataFetcher?: any;
+  criteria?: any;
+};
+
+export async function* searchPackagesByCriteria(
+  options: searchPackagesByCriteriaOptions = {}
+) {
   const limit = Number(options.limit) || kDefaultLimit;
   const delay = Number(options.delay) || 0;
-  const dataFetcher = is.func(options.dataFetcher) ? options.dataFetcher : kDefaultFetcher;
-  const criteria = is.plainObject(options.criteria) ? klona(options.criteria) : kDefaultCriteria;
+  const dataFetcher = is.func(options.dataFetcher)
+    ? options.dataFetcher
+    : kDefaultFetcher;
+  const criteria = is.plainObject(options.criteria)
+    ? klona(options.criteria)
+    : kDefaultCriteria;
   let from = 0;
 
   while (true) {
-    const searchOptions = Object.assign(criteria, { text: "boost-exact:true", size: kRegSearchLimit, from });
-    const { objects } = await search(searchOptions);
+    const searchOptions = Object.assign(criteria, {
+      text: "boost-exact:true",
+      size: kRegSearchLimit,
+      from,
+    });
+    const { objects }: any = await search(searchOptions);
     yield* objects.map(dataFetcher);
 
     from += kRegSearchLimit;
@@ -49,7 +67,12 @@ export async function* searchPackagesByCriteria(options = {}) {
 }
 
 // eslint-disable-next-line max-params
-export async function downloadFromSource(source, ee, lock, tmpLocation) {
+export async function downloadFromSource(
+  source: AsyncGenerator<any, void, any>,
+  ee: EventEmitter,
+  lock: Locker,
+  tmpLocation: string
+) {
   try {
     for await (const packageExpr of source) {
       const free = await lock.acquireOne();
@@ -58,21 +81,35 @@ export async function downloadFromSource(source, ee, lock, tmpLocation) {
         const tmpPathLocation = path.join(tmpLocation, packageExpr);
         fetchPackage(packageExpr, tmpPathLocation)
           .then(() => {
-            ee.emit("row", { done: false, value: { name: packageExpr, location: tmpPathLocation, root: tmpLocation } });
+            ee.emit("row", {
+              done: false,
+              value: {
+                name: packageExpr,
+                location: tmpPathLocation,
+                root: tmpLocation,
+              },
+            });
             free();
           })
           .catch(console.error);
       });
     }
     ee.emit("row", { done: true });
-  }
-  catch (error) {
+  } catch (error) {
     ee.emit("row", { done: true, error });
   }
 }
 
-export async function* downloadPackageOnRegistry(source, options = {}) {
-  const maxConcurrent = Number(options.maxConcurrent) || kMaximumConcurrentDownload;
+type downloadPackageOnRegistryOptions = {
+  maxConcurrent?: string;
+};
+
+export async function* downloadPackageOnRegistry(
+  source: AsyncGenerator<any, void, any>,
+  options: downloadPackageOnRegistryOptions = {}
+) {
+  const maxConcurrent =
+    Number(options.maxConcurrent) || kMaximumConcurrentDownload;
   const lock = new Locker({ maxConcurrent });
   const ee = new EventEmitter();
 
@@ -88,18 +125,16 @@ export async function* downloadPackageOnRegistry(source, options = {}) {
           throw error;
         }
         break;
-      }
-      else if (value !== null) {
+      } else if (value !== null) {
         yield value;
       }
     }
-  }
-  finally {
+  } finally {
     await fs.rm(tmpLocation, { force: true, recursive: true });
   }
 }
 
-export async function analyzeJavaScriptFile(fileLocation) {
+export async function analyzeJavaScriptFile(fileLocation: string) {
   const str = await fs.readFile(fileLocation, "utf-8");
   const isMin = path.basename(fileLocation).includes(".min") || isMinified(str);
 
@@ -107,5 +142,5 @@ export async function analyzeJavaScriptFile(fileLocation) {
 }
 
 export const Utils = {
-  getTarballComposition
+  getTarballComposition,
 };
