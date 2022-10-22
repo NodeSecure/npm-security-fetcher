@@ -9,7 +9,6 @@
 <p align="center">
     <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/package-json/v/fraxken/npm-security-fetcher?style=flat-square" alt="npm version"></a>
     <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/license/fraxken/npm-security-fetcher?style=flat-square" alt="license"></a>
-    <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg?style=flat-square" alt="Responsible Disclosure Policy" /></a>
 </p>
 
 ## About
