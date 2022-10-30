@@ -9,10 +9,14 @@ import * as colors from "kleur/colors";
 import sade from "sade";
 
 // Import Internal Dependencies
-import * as commands from "./commands/index.js";
+import * as commands from "./commands/index";
 
 const prog = sade("npm-security-fetcher").version("1.0.0");
-console.log(colors.gray(`\n > executing npm-security-fetch at: ${colors.yellow(process.cwd())}\n`));
+console.log(
+  colors.gray(
+    `\n > executing npm-security-fetch at: ${colors.yellow(process.cwd())}\n`
+  )
+);
 
 prog
   .command("npm <file>")
@@ -22,4 +26,3 @@ prog
   .action(commands.npm);
 
 prog.parse(process.argv);
-
