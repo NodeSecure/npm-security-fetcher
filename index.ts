@@ -10,7 +10,7 @@ import { search } from "@nodesecure/npm-registry-sdk";
 import { klona } from "klona/json";
 import is from "@slimio/is";
 import Locker from "@slimio/lock";
-import JSXRay from "@nodesecure/js-x-ray";
+import * as JSXRay from "@nodesecure/js-x-ray";
 
 // @ts-ignore
 import isMinified from "is-minified-code";
