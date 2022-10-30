@@ -15,6 +15,6 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
   },
-  "include": ["src", "bin", "example"],
+  "include": ["src", "bin"],
   "exclude": ["node_modules", "dist"]
 }

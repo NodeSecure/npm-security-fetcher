@@ -10,11 +10,13 @@ import { search } from "@nodesecure/npm-registry-sdk";
 import { klona } from "klona/json";
 import is from "@slimio/is";
 import Locker from "@slimio/lock";
-import isMinified from "is-minified-code";
 import JSXRay from "@nodesecure/js-x-ray";
 
+// @ts-ignore
+import isMinified from "is-minified-code";
+
 // Import Internal Dependencies
-import { fetchPackage, getTarballComposition } from "./src/utils";
+import { fetchPackage, getTarballComposition } from "./src/utils.js";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -22,8 +24,7 @@ const kDefaultCriteria = { popularity: 1 };
 const kDefaultLimit = 500;
 
 // eslint-disable-next-line func-style
-const kDefaultFetcher = (raw: { package: { name: string; version: number } }) =>
-  `${raw.package.name}@${raw.package.version}`;
+const kDefaultFetcher = (raw: { package: { name: string; version: number } }) => `${raw.package.name}@${raw.package.version}`;
 const kMaximumConcurrentDownload = 5;
 
 type searchPackagesByCriteriaOptions = {
@@ -50,7 +51,7 @@ export async function* searchPackagesByCriteria(
     const searchOptions = Object.assign(criteria, {
       text: "boost-exact:true",
       size: kRegSearchLimit,
-      from,
+      from
     });
     const { objects }: any = await search(searchOptions);
     yield* objects.map(dataFetcher);
@@ -86,8 +87,8 @@ export async function downloadFromSource(
               value: {
                 name: packageExpr,
                 location: tmpPathLocation,
-                root: tmpLocation,
-              },
+                root: tmpLocation
+              }
             });
             free();
           })
@@ -95,7 +96,8 @@ export async function downloadFromSource(
       });
     }
     ee.emit("row", { done: true });
-  } catch (error) {
+  }
+  catch (error) {
     ee.emit("row", { done: true, error });
   }
 }
@@ -125,11 +127,13 @@ export async function* downloadPackageOnRegistry(
           throw error;
         }
         break;
-      } else if (value !== null) {
+      }
+      else if (value !== null) {
         yield value;
       }
     }
-  } finally {
+  }
+  finally {
     await fs.rm(tmpLocation, { force: true, recursive: true });
   }
 }
@@ -142,5 +146,5 @@ export async function analyzeJavaScriptFile(fileLocation: string) {
 }
 
 export const Utils = {
-  getTarballComposition,
+  getTarballComposition
 };

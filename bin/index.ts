@@ -9,7 +9,7 @@ import * as colors from "kleur/colors";
 import sade from "sade";
 
 // Import Internal Dependencies
-import * as commands from "./commands/index";
+import * as commands from "./commands/index.js";
 
 const prog = sade("npm-security-fetcher").version("1.0.0");
 console.log(

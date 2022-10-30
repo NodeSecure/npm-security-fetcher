@@ -25,7 +25,8 @@ export async function getTarballComposition(tarballDir: string) {
     if (dirent.isFile()) {
       ext.add(path.extname(file));
       files.push(file);
-    } else if (dirent.isDirectory()) {
+    }
+    else if (dirent.isDirectory()) {
       dirs.push(file);
     }
   }
@@ -33,23 +34,27 @@ export async function getTarballComposition(tarballDir: string) {
   try {
     const sizeAll = await Promise.all([
       ...files.map((file) => fs.stat(file)),
-      ...dirs.map((file) => fs.stat(file)),
+      ...dirs.map((file) => fs.stat(file))
     ]);
     size += sizeAll.reduce((prev, curr) => prev + curr.size, 0);
-  } catch (err) {
+  }
+  catch (err) {
     // ignore
   }
 
   return { ext, size, files };
 }
 
-export async function fetchPackage(packageExpr: string, dest: string) {
+export async function fetchPackage(
+  packageExpr: string,
+  dest: string
+): Promise<void> {
   await fs.rm(dest, { recursive: true, force: true });
 
   await pacote.extract(packageExpr, dest, {
     ...kNpmToken,
     registry: getLocalRegistryURL(),
-    cache: `${os.homedir()}/.npm`,
+    cache: `${os.homedir()}/.npm`
   });
   await timers.setImmediate();
 }

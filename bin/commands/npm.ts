@@ -8,8 +8,8 @@ import Locker from "@slimio/lock";
 // Import Internal Dependencies
 import {
   searchPackagesByCriteria,
-  downloadPackageOnRegistry,
-} from "../../index";
+  downloadPackageOnRegistry
+} from "../../index.js";
 
 export async function npm(
   file: string,
@@ -39,7 +39,8 @@ export async function npm(
 
       run(ctx, data).catch(console.error).finally(free);
     }
-  } finally {
+  }
+  finally {
     await close(ctx);
 
     while (true) {

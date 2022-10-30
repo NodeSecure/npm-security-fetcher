@@ -1,3 +1,5 @@
+/* eslint-disable max-params */
+
 // Node.js
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -40,10 +42,8 @@ export async function run(ctx: Ctx, { name, location, root }: RunOptions) {
   try {
     console.log(`handle package name: ${name}, count: ${count++}`);
     const { files } = await Utils.getTarballComposition(location);
-    const jsFiles = files.filter((name) =>
-      kJavaScriptExtensions.has(path.extname(name))
-    );
-    const toWait = [];
+    const jsFiles = files.filter((name) => kJavaScriptExtensions.has(path.extname(name)));
+    const toWait: any[] = [];
 
     for (const file of jsFiles) {
       const cleanName = filenamify(
@@ -66,7 +66,8 @@ export async function run(ctx: Ctx, { name, location, root }: RunOptions) {
     const fileName =
       path.join(ctx.analysisDir, name.replace(/\//g, "__")) + ".json";
     await fs.writeFile(fileName, content);
-  } finally {
+  }
+  finally {
     await fs.rmdir(location, { recursive: true });
   }
 }
@@ -78,24 +79,21 @@ async function dumpParsingError(
   pkgName: string
 ) {
   try {
+    const stack = typeof error === "string" ? "" : error.stack.split("\n");
     const dumpStr = JSON.stringify(
       {
         pkgName,
         code: typeof error === "string" ? null : error.code || null,
         message: typeof error === "string" ? error : error.message || "",
-        stack:
-          typeof error === "string"
-            ? ""
-            : error.stack
-            ? error.stack.split("\n")
-            : "",
+        stack
       },
       null,
       kJSONSpace
     );
 
     await fs.writeFile(path.join(ctx.errorDir, `${cleanName}.json`), dumpStr);
-  } catch {
+  }
+  catch {
     // ignore
   }
 }
@@ -110,12 +108,13 @@ async function runASTAnalysis(
 ) {
   try {
     const ASTAnalysis = await analyzeJavaScriptFile(location);
-    //@ts-ignore
+    // @ts-ignore
     const deps = [...ASTAnalysis.dependencies];
     const warnings = ASTAnalysis.warnings;
 
     return { [cleanName]: { warnings, deps } };
-  } catch (error: any) {
+  }
+  catch (error: any) {
     if (error.name === "SyntaxError") {
       return {};
     }
