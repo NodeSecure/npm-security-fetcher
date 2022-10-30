@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/npm-security-fetcher",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Fetch packages from npm for Security purposes",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
