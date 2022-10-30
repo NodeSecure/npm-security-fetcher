@@ -19,11 +19,10 @@ I personally created this project to analyze npm packages by various criteria (p
 
 - Pull packages from the npm registry by divers criteria.
 - Offers you various methods to read and extract information from the npm tarball.
-- Include [js-x-ray](https://github.com/fraxken/js-x-ray) by default.
 - Functionalities can be extended
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) v14 or higher
+- [Node.js](https://nodejs.org/en/) v16 or higher
 
 ## Getting Started
 

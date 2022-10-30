@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import "make-promises-safe";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -11,7 +10,7 @@ import sade from "sade";
 // Import Internal Dependencies
 import * as commands from "./commands/index.js";
 
-const prog = sade("npm-security-fetcher").version("1.0.0");
+const prog = sade("npm-security-fetcher").version("2.0.0");
 console.log(
   colors.gray(
     `\n > executing npm-security-fetch at: ${colors.yellow(process.cwd())}\n`

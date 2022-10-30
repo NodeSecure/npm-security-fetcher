@@ -10,13 +10,9 @@ import { search } from "@nodesecure/npm-registry-sdk";
 import { klona } from "klona/json";
 import is from "@slimio/is";
 import Locker from "@slimio/lock";
-import * as JSXRay from "@nodesecure/js-x-ray";
-
-// @ts-ignore
-import isMinified from "is-minified-code";
 
 // Import Internal Dependencies
-import { fetchPackage, getTarballComposition } from "./src/utils.js";
+import { fetchPackage } from "./src/utils.js";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -27,15 +23,21 @@ const kDefaultLimit = 500;
 const kDefaultFetcher = (raw: { package: { name: string; version: number } }) => `${raw.package.name}@${raw.package.version}`;
 const kMaximumConcurrentDownload = 5;
 
-type searchPackagesByCriteriaOptions = {
+export interface IRunOptions {
+  name: string;
+  location: string;
+  root: string;
+}
+
+export interface ISearchPackagesByCriteriaOptions {
   limit?: string;
   delay?: string;
   dataFetcher?: any;
   criteria?: any;
-};
+}
 
 export async function* searchPackagesByCriteria(
-  options: searchPackagesByCriteriaOptions = {}
+  options: ISearchPackagesByCriteriaOptions = {}
 ) {
   const limit = Number(options.limit) || kDefaultLimit;
   const delay = Number(options.delay) || 0;
@@ -102,13 +104,13 @@ export async function downloadFromSource(
   }
 }
 
-type downloadPackageOnRegistryOptions = {
+export type IDownloadPackageOnRegistryOptions = {
   maxConcurrent?: string;
 };
 
 export async function* downloadPackageOnRegistry(
   source: AsyncGenerator<any, void, any>,
-  options: downloadPackageOnRegistryOptions = {}
+  options: IDownloadPackageOnRegistryOptions = {}
 ) {
   const maxConcurrent =
     Number(options.maxConcurrent) || kMaximumConcurrentDownload;
@@ -137,14 +139,3 @@ export async function* downloadPackageOnRegistry(
     await fs.rm(tmpLocation, { force: true, recursive: true });
   }
 }
-
-export async function analyzeJavaScriptFile(fileLocation: string) {
-  const str = await fs.readFile(fileLocation, "utf-8");
-  const isMin = path.basename(fileLocation).includes(".min") || isMinified(str);
-
-  return JSXRay.runASTAnalysis(str, { isMinified: isMin });
-}
-
-export const Utils = {
-  getTarballComposition
-};

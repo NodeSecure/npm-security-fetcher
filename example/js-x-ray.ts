@@ -1,125 +1,43 @@
-/* eslint-disable max-params */
-
-// Node.js
+// Import Node.js Dependencies
 import fs from "node:fs/promises";
 import path from "node:path";
 
-// Third-party
-import filenamify from "filenamify";
+// Import Third-party Dependencies
+import { tarball } from "@nodesecure/scanner";
 
-// Internal
-import { analyzeJavaScriptFile, Utils } from "../index";
+// Import Internal Dependencies
+import { IRunOptions } from "../index.js";
 
-// CONSTANTS
-const kJavaScriptExtensions = new Set([".js", ".mjs", ".cjs"]);
-const kJSONSpace = 2;
-const kDefaultReplacement = "#";
+type Context = {
+  outdir: string;
+  count: number;
+};
 
-let count = 0;
+export async function init(): Promise<Context> {
+  const outdir = path.join(process.cwd(), "nsf-results");
+  await fs.mkdir(outdir, { recursive: true });
 
-export async function init() {
-  const baseDir = path.join(process.cwd(), "results");
-
-  const analysisDir = path.join(baseDir, "packages");
-  const errorDir = path.join(baseDir, "parsing-errors");
-  await fs.mkdir(analysisDir, { recursive: true });
-  await fs.mkdir(errorDir, { recursive: true });
-
-  return { analysisDir, errorDir };
+  return { outdir, count: 0 };
 }
 
 export async function close() {
   console.log("close triggered");
 }
 
-type RunOptions = {
-  name: string;
-  location: string;
-  root: string;
-};
+export async function run(ctx: Context, options: IRunOptions) {
+  const { name, location } = options;
 
-export async function run(ctx: Ctx, { name, location, root }: RunOptions) {
   try {
-    console.log(`handle package name: ${name}, count: ${count++}`);
-    const { files } = await Utils.getTarballComposition(location);
-    const jsFiles = files.filter((name) => kJavaScriptExtensions.has(path.extname(name)));
-    const toWait: any[] = [];
+    console.log(`handle package name: ${name}, count: ${ctx.count++}`);
+    const result = await tarball.scanPackage(location, name);
 
-    for (const file of jsFiles) {
-      const cleanName = filenamify(
-        path.relative(root, file).slice(name.length),
-        { replacement: kDefaultReplacement }
-      );
-      toWait.push(runASTAnalysis(ctx, cleanName, file, name));
-    }
-
-    const results = (await Promise.allSettled(toWait))
-      .filter(({ status }) => status === "fulfilled")
-      .map((p) => (p as PromiseFulfilledResult<unknown>).value);
-
-    const content = JSON.stringify(
-      Object.assign({}, ...results),
-      null,
-      kJSONSpace
+    const fileName = path.join(ctx.outdir, name.replace(/\//g, "__")) + ".json";
+    await fs.writeFile(
+      fileName,
+      JSON.stringify(result, null, 2)
     );
-
-    const fileName =
-      path.join(ctx.analysisDir, name.replace(/\//g, "__")) + ".json";
-    await fs.writeFile(fileName, content);
   }
   finally {
     await fs.rmdir(location, { recursive: true });
-  }
-}
-
-async function dumpParsingError(
-  ctx: Ctx,
-  error: { code: string; message: string; stack: string } | string,
-  cleanName: string,
-  pkgName: string
-) {
-  try {
-    const stack = typeof error === "string" ? "" : error.stack.split("\n");
-    const dumpStr = JSON.stringify(
-      {
-        pkgName,
-        code: typeof error === "string" ? null : error.code || null,
-        message: typeof error === "string" ? error : error.message || "",
-        stack
-      },
-      null,
-      kJSONSpace
-    );
-
-    await fs.writeFile(path.join(ctx.errorDir, `${cleanName}.json`), dumpStr);
-  }
-  catch {
-    // ignore
-  }
-}
-
-type Ctx = { analysisDir: string; errorDir: string };
-
-async function runASTAnalysis(
-  ctx: Ctx,
-  cleanName: string,
-  location: string,
-  pkgName: string
-) {
-  try {
-    const ASTAnalysis = await analyzeJavaScriptFile(location);
-    // @ts-ignore
-    const deps = [...ASTAnalysis.dependencies];
-    const warnings = ASTAnalysis.warnings;
-
-    return { [cleanName]: { warnings, deps } };
-  }
-  catch (error: any) {
-    if (error.name === "SyntaxError") {
-      return {};
-    }
-    await dumpParsingError(ctx, error, cleanName, pkgName);
-
-    return {};
   }
 }
