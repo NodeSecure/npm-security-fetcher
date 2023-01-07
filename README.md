@@ -7,8 +7,15 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/package-json/v/fraxken/npm-security-fetcher?style=flat-square" alt="npm version"></a>
-    <a href="https://github.com/fraxken/npm-security-fetcher"><img src="https://img.shields.io/github/license/fraxken/npm-security-fetcher?style=flat-square" alt="license"></a>
+    <a href="https://github.com/NodeSecure/npm-security-fetcher">
+      <img src="https://img.shields.io/github/package-json/v/NodeSecure/npm-security-fetcher?style=flat-square" alt="npm version">
+    </a>
+    <a href="https://github.com/NodeSecure/npm-security-fetcher">
+      <img src="https://img.shields.io/github/license/NodeSecure/npm-security-fetcher?style=flat-square" alt="license">
+    </a>
+    <a href="https://api.securityscorecards.dev/projects/github.com/NodeSecure/npm-security-fetcher">
+      <img src="https://api.securityscorecards.dev/projects/github.com/NodeSecure/npm-security-fetcher/badge" alt="ossf scorecard">
+    </a>
 </p>
 
 ## About
