@@ -1,6 +1,4 @@
 // Import Node.js Dependencies
-import os from "node:os";
-import fs from "node:fs/promises";
 import path from "node:path";
 import timers from "node:timers/promises";
 import { on, EventEmitter } from "node:events";
@@ -105,37 +103,31 @@ export async function downloadFromSource(
 }
 
 export type IDownloadPackageOnRegistryOptions = {
-  maxConcurrent?: string;
+  tempLocation: string;
+  maxConcurrent?: number;
 };
 
 export async function* downloadPackageOnRegistry(
   source: AsyncGenerator<any, void, any>,
-  options: IDownloadPackageOnRegistryOptions = {}
+  options: IDownloadPackageOnRegistryOptions
 ) {
-  const maxConcurrent =
-    Number(options.maxConcurrent) || kMaximumConcurrentDownload;
+  const { tempLocation, maxConcurrent = kMaximumConcurrentDownload } = options;
+
   const lock = new Locker({ maxConcurrent });
   const ee = new EventEmitter();
 
-  // Create temporary directory
-  const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
-  setImmediate(() => downloadFromSource(source, ee, lock, tmpLocation));
+  setImmediate(() => downloadFromSource(source, ee, lock, tempLocation));
 
-  try {
-    for await (const [data] of on(ee, "row")) {
-      const { done, error = null, value = null } = data;
-      if (done) {
-        if (error !== null) {
-          throw error;
-        }
-        break;
+  for await (const [data] of on(ee, "row")) {
+    const { done, error = null, value = null } = data;
+    if (done) {
+      if (error !== null) {
+        throw error;
       }
-      else if (value !== null) {
-        yield value;
-      }
+      break;
     }
-  }
-  finally {
-    await fs.rm(tmpLocation, { force: true, recursive: true });
+    else if (value !== null) {
+      yield value;
+    }
   }
 }

@@ -1,5 +1,8 @@
 // Import Node.js Dependencies
 import path from "node:path";
+import os from "node:os";
+import timers from "node:timers/promises";
+import fs from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 // Import Third-party Dependencies
@@ -22,8 +25,11 @@ export async function npm(
     URL.prototype.toString.call(filePath)
   );
 
+  // Create temporary location for extracting tarballs
+  const tempLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
+
   const searchOptions = { limit };
-  const downloadOptions = { maxConcurrent: max };
+  const downloadOptions = { maxConcurrent: Number(max), tempLocation };
 
   const ctx = await init();
   const topLock = new Locker({ maxConcurrent: 20 });
@@ -39,14 +45,17 @@ export async function npm(
 
       run(ctx, data).catch(console.error).finally(free);
     }
-  }
-  finally {
-    await close(ctx);
 
     while (true) {
       if (topLock.running === 0) {
         break;
       }
+      await timers.setTimeout(100);
     }
+  }
+  finally {
+    await close(ctx);
+
+    await fs.rm(tempLocation, { force: true, recursive: true });
   }
 }
