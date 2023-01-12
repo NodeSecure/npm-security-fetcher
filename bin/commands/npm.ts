@@ -6,7 +6,7 @@ import fs from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 // Import Third-party Dependencies
-import Locker from "@slimio/lock";
+import { Mutex } from "@openally/mutex";
 
 // Import Internal Dependencies
 import {
@@ -32,7 +32,7 @@ export async function npm(
   const downloadOptions = { maxConcurrent: Number(max), tempLocation };
 
   const ctx = await init();
-  const topLock = new Locker({ maxConcurrent: 20 });
+  const concurrencyLimiter = new Mutex({ concurrency: 20 });
 
   try {
     const searchIterator = searchPackagesByCriteria(searchOptions);
@@ -41,13 +41,15 @@ export async function npm(
       searchIterator,
       downloadOptions
     )) {
-      const free = await topLock.acquireOne();
+      const free = await concurrencyLimiter.acquire();
 
-      run(ctx, data).catch(console.error).finally(free);
+      run(ctx, data)
+        .catch(console.error)
+        .finally(free);
     }
 
     while (true) {
-      if (topLock.running === 0) {
+      if (concurrencyLimiter.running === 0) {
         break;
       }
       await timers.setTimeout(100);

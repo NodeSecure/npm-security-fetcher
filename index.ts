@@ -7,7 +7,7 @@ import { on, EventEmitter } from "node:events";
 import { search } from "@nodesecure/npm-registry-sdk";
 import { klona } from "klona/json";
 import is from "@slimio/is";
-import Locker from "@slimio/lock";
+import { Mutex } from "@openally/mutex";
 
 // Import Internal Dependencies
 import { fetchPackage } from "./src/utils.js";
@@ -71,12 +71,12 @@ export async function* searchPackagesByCriteria(
 export async function downloadFromSource(
   source: AsyncGenerator<any, void, any>,
   ee: EventEmitter,
-  lock: Locker,
+  lock: Mutex,
   tmpLocation: string
 ) {
   try {
     for await (const packageExpr of source) {
-      const free = await lock.acquireOne();
+      const free = await lock.acquire();
 
       setImmediate(() => {
         const tmpPathLocation = path.join(tmpLocation, packageExpr);
@@ -104,16 +104,16 @@ export async function downloadFromSource(
 
 export type IDownloadPackageOnRegistryOptions = {
   tempLocation: string;
-  maxConcurrent?: number;
+  concurrency?: number;
 };
 
 export async function* downloadPackageOnRegistry(
   source: AsyncGenerator<any, void, any>,
   options: IDownloadPackageOnRegistryOptions
 ) {
-  const { tempLocation, maxConcurrent = kMaximumConcurrentDownload } = options;
+  const { tempLocation, concurrency = kMaximumConcurrentDownload } = options;
 
-  const lock = new Locker({ maxConcurrent });
+  const lock = new Mutex({ concurrency });
   const ee = new EventEmitter();
 
   setImmediate(() => downloadFromSource(source, ee, lock, tempLocation));
