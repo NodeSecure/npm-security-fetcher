@@ -8,13 +8,13 @@
 
 <p align="center">
     <a href="https://github.com/NodeSecure/npm-security-fetcher">
-      <img src="https://img.shields.io/github/package-json/v/NodeSecure/npm-security-fetcher?style=flat-square" alt="npm version">
+      <img src="https://img.shields.io/github/package-json/v/NodeSecure/npm-security-fetcher?style=for-the-badge" alt="npm version">
     </a>
     <a href="https://github.com/NodeSecure/npm-security-fetcher">
-      <img src="https://img.shields.io/github/license/NodeSecure/npm-security-fetcher?style=flat-square" alt="license">
+      <img src="https://img.shields.io/github/license/NodeSecure/npm-security-fetcher?style=for-the-badge" alt="license">
     </a>
     <a href="https://api.securityscorecards.dev/projects/github.com/NodeSecure/npm-security-fetcher">
-      <img src="https://api.securityscorecards.dev/projects/github.com/NodeSecure/npm-security-fetcher/badge" alt="ossf scorecard">
+      <img src="https://api.securityscorecards.dev/projects/github.com/NodeSecure/npm-security-fetcher/badge?style=for-the-badge" alt="ossf scorecard">
     </a>
 </p>
 
@@ -29,6 +29,7 @@ I personally created this project to analyze npm packages by various criteria (p
 - Functionalities can be extended
 
 ## Requirements
+
 - [Node.js](https://nodejs.org/en/) v16 or higher
 
 ## Getting Started
@@ -57,6 +58,7 @@ $ nsf --help
 ## Usage example
 
 The first step is to create a javascript file with three methods:
+
 - init (run before fetching and extracting packages from the npm registry).
 - run (called for each downloaded npm packages).
 - close (run at the end when there is no more packages to fetch).
@@ -67,35 +69,37 @@ This script must use the latest Node.js ESM (it also support top-level-await).
 import path from "path";
 
 export async function init() {
-    const baseDir = path.join(process.cwd(), "results");
+  const baseDir = path.join(process.cwd(), "results");
 
-    return { baseDir }; // <-- init and return context object!
+  return { baseDir }; // <-- init and return context object!
 }
 
 export async function close(ctx) {
-    console.log("close triggered");
+  console.log("close triggered");
 }
 
 export async function run(ctx, { name, location, root }) {
-    console.log(ctx.baseDir);
-    console.log(`handle package name: ${name}, location: ${location}`);
+  console.log(ctx.baseDir);
+  console.log(`handle package name: ${name}, location: ${location}`);
 }
 ```
 
 > There is no restriction on the nature of the context.
 
 After editing your file you can run your script as follows
+
 ```bash
 $ nsf npm myfile.js
 ```
 
 The root folder **"example"** contains real world examples that are used (for js-x-ray etc).
 
-
 ## Contributors ✨
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -119,4 +123,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## License
+
 MIT
