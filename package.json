@@ -29,21 +29,21 @@
   },
   "homepage": "https://github.com/NodeSecure/npm-security-fetcher#readme",
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.5.0",
-    "@types/node": "^18.11.7",
+    "@nodesecure/eslint-config": "^1.6.0",
+    "@types/node": "^18.11.18",
     "@types/pacote": "^11.1.5",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.8.4"
+    "rimraf": "^4.1.1",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "^5.1.0",
+    "@nodesecure/js-x-ray": "^6.0.1",
     "@nodesecure/npm-registry-sdk": "^1.4.1",
-    "@nodesecure/scanner": "^3.8.0",
+    "@nodesecure/scanner": "^3.8.2",
     "@openally/mutex": "^1.0.0",
     "@slimio/is": "^1.5.1",
     "dotenv": "^16.0.3",
     "kleur": "^4.1.5",
-    "klona": "^2.0.5",
+    "klona": "^2.0.6",
     "pacote": "^15.0.8",
     "sade": "^1.8.1",
     "ts-node": "^10.9.1"
