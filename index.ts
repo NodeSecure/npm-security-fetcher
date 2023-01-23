@@ -19,7 +19,7 @@ const kDefaultLimit = 500;
 
 // eslint-disable-next-line func-style
 const kDefaultFetcher = (raw: { package: { name: string; version: number } }) => `${raw.package.name}@${raw.package.version}`;
-const kMaximumConcurrentDownload = 5;
+const kMaximumConcurrentDownload = 10;
 
 export interface IRunOptions {
   name: string;
