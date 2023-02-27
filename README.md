@@ -30,7 +30,7 @@ I personally created this project to analyze npm packages by various criteria (p
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/) v16 or higher
+- [Node.js](https://nodejs.org/en/) v18 or higher
 
 ## Getting Started
 
@@ -97,7 +97,9 @@ The root folder **"example"** contains real world examples that are used (for js
 ## Contributors ✨
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
