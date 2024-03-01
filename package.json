@@ -33,10 +33,10 @@
   "homepage": "https://github.com/NodeSecure/npm-security-fetcher#readme",
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.6.0",
-    "@types/node": "^18.11.18",
+    "@types/node": "^20.11.24",
     "@types/pacote": "^11.1.5",
-    "rimraf": "^4.1.1",
-    "typescript": "^4.9.4"
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@nodesecure/js-x-ray": "^6.0.1",
