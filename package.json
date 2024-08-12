@@ -33,9 +33,9 @@
   "homepage": "https://github.com/NodeSecure/npm-security-fetcher#readme",
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.6.0",
-    "@types/node": "^20.11.28",
+    "@types/node": "^22.2.0",
     "@types/pacote": "^11.1.5",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "typescript": "^5.4.2"
   },
   "dependencies": {
