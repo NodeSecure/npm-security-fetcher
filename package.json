@@ -41,7 +41,7 @@
   "dependencies": {
     "@nodesecure/js-x-ray": "^6.0.1",
     "@nodesecure/npm-registry-sdk": "^2.1.1",
-    "@nodesecure/scanner": "^5.1.0",
+    "@nodesecure/scanner": "^6.1.0",
     "@openally/mutex": "^1.0.0",
     "@slimio/is": "^2.0.0",
     "dotenv": "^16.0.3",
