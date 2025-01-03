@@ -16,7 +16,7 @@ import {
 
 export async function npm(
   file: string,
-  cmdOptions: { limit: string; max: string }
+  cmdOptions: { limit: string; max: string; }
 ) {
   const { limit, max } = cmdOptions;
 
