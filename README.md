@@ -30,7 +30,7 @@ I personally created this project to analyze npm packages by various criteria (p
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/) v20 or higher
+- [Node.js](https://nodejs.org/en/) v22 or higher
 
 ## Getting Started
 
