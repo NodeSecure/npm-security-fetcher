@@ -5,7 +5,6 @@ import { on, EventEmitter } from "node:events";
 
 // Import Third-party Dependencies
 import { search } from "@nodesecure/npm-registry-sdk";
-import { klona } from "klona/json";
 import is from "@slimio/is";
 import { Mutex } from "@openally/mutex";
 
@@ -16,9 +15,11 @@ import { fetchPackage } from "./src/utils.js";
 const kRegSearchLimit = 10;
 const kDefaultCriteria = { popularity: 1 };
 const kDefaultLimit = 500;
-
-// eslint-disable-next-line func-style
-const kDefaultFetcher = (raw: { package: { name: string; version: number } }) => `${raw.package.name}@${raw.package.version}`;
+function kDefaultFetcher(raw: {
+  package: { name: string; version: number; };
+}) {
+  return `${raw.package.name}@${raw.package.version}`;
+}
 const kMaximumConcurrentDownload = 10;
 
 export interface IRunOptions {
@@ -43,7 +44,7 @@ export async function* searchPackagesByCriteria(
     ? options.dataFetcher
     : kDefaultFetcher;
   const criteria = is.plainObject(options.criteria)
-    ? klona(options.criteria)
+    ? structuredClone(options.criteria)
     : kDefaultCriteria;
   let from = 0;
 
