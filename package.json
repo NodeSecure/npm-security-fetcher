@@ -35,7 +35,7 @@
   "devDependencies": {
     "@openally/config.eslint": "^2.1.0",
     "@openally/config.typescript": "^1.0.3",
-    "@types/node": "^22.15.21",
+    "@types/node": "^24.0.1",
     "@types/pacote": "^11.1.8",
     "rimraf": "^6.0.1",
     "typescript": "^5.8.3"
