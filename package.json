@@ -41,7 +41,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "^8.1.1",
+    "@nodesecure/js-x-ray": "^9.0.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/scanner": "^6.4.0",
     "@openally/mutex": "^1.0.0",
