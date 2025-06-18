@@ -22,13 +22,13 @@ function kDefaultFetcher(raw: {
 }
 const kMaximumConcurrentDownload = 10;
 
-export interface IRunOptions {
+export interface RunOptions {
   name: string;
   location: string;
   root: string;
 }
 
-export interface ISearchPackagesByCriteriaOptions {
+export interface SearchPackagesByCriteriaOptions {
   limit?: string;
   delay?: string;
   dataFetcher?: any;
@@ -36,7 +36,7 @@ export interface ISearchPackagesByCriteriaOptions {
 }
 
 export async function* searchPackagesByCriteria(
-  options: ISearchPackagesByCriteriaOptions = {}
+  options: SearchPackagesByCriteriaOptions = {}
 ) {
   const limit = Number(options.limit) || kDefaultLimit;
   const delay = Number(options.delay) || 0;
@@ -103,14 +103,14 @@ export async function downloadFromSource(
   }
 }
 
-export type IDownloadPackageOnRegistryOptions = {
+export type DownloadPackageOnRegistryOptions = {
   tempLocation: string;
   concurrency?: number;
 };
 
 export async function* downloadPackageOnRegistry(
   source: AsyncGenerator<any, void, any>,
-  options: IDownloadPackageOnRegistryOptions
+  options: DownloadPackageOnRegistryOptions
 ) {
   const { tempLocation, concurrency = kMaximumConcurrentDownload } = options;
 

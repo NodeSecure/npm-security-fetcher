@@ -6,7 +6,7 @@ import path from "node:path";
 import { tarball } from "@nodesecure/scanner";
 
 // Import Internal Dependencies
-import { IRunOptions } from "../index.js";
+import type { RunOptions } from "../index.js";
 
 type Context = {
   outdir: string;
@@ -24,7 +24,10 @@ export async function close() {
   console.log("close triggered");
 }
 
-export async function run(ctx: Context, options: IRunOptions) {
+export async function run(
+  ctx: Context,
+  options: RunOptions
+) {
   const { name, location } = options;
 
   try {
