@@ -3,17 +3,21 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+// Import Node.js Dependencies
+import { styleText } from "node:util";
+
 // Import Third-party Dependencies
-import * as colors from "kleur/colors";
 import sade from "sade";
 
 // Import Internal Dependencies
 import * as commands from "./commands/index.js";
 
 const prog = sade("npm-security-fetcher").version("2.0.0");
+const location = styleText("yellow", process.cwd());
 console.log(
-  colors.gray(
-    `\n > executing npm-security-fetch at: ${colors.yellow(process.cwd())}\n`
+  styleText(
+    "gray",
+    `\n > executing npm-security-fetch at: ${location}\n`
   )
 );
 
