@@ -1,1 +1,1 @@
-export * from "./npm.js";
+export * from "./npm.ts";

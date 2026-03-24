@@ -9,7 +9,7 @@ import is from "@slimio/is";
 import { Mutex } from "@openally/mutex";
 
 // Import Internal Dependencies
-import { fetchPackage } from "./src/utils.js";
+import { fetchPackage } from "./src/utils.ts";
 
 // CONSTANTS
 const kRegSearchLimit = 10;

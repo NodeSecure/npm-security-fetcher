@@ -17,7 +17,10 @@ export async function fetchPackage(
   packageExpr: string,
   dest: string
 ): Promise<void> {
-  await fs.rm(dest, { recursive: true, force: true });
+  await fs.rm(dest, {
+    recursive: true,
+    force: true
+  });
 
   await pacote.extract(packageExpr, dest, {
     ...kNpmToken,

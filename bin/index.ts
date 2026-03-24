@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
-import dotenv from "dotenv";
-dotenv.config();
-
 // Import Node.js Dependencies
+import { loadEnvFile } from "node:process";
 import { styleText } from "node:util";
+
+try {
+  loadEnvFile();
+}
+catch {
+  // do nothing, we can continue without .env file
+}
 
 // Import Third-party Dependencies
 import sade from "sade";
