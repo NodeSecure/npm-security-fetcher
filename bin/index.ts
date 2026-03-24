@@ -1,18 +1,34 @@
 #!/usr/bin/env node
 
-import dotenv from "dotenv";
-dotenv.config();
-
 // Import Node.js Dependencies
-import { styleText } from "node:util";
+import { loadEnvFile } from "node:process";
+import { parseArgs, styleText } from "node:util";
 
-// Import Third-party Dependencies
-import sade from "sade";
+try {
+  loadEnvFile();
+}
+catch {
+  // do nothing, we can continue without .env file
+}
 
 // Import Internal Dependencies
 import * as commands from "./commands/index.js";
 
-const prog = sade("npm-security-fetcher").version("2.0.0");
+const { values, positionals } = parseArgs({
+  args: process.argv.slice(2),
+  options: {
+    limit: { type: "string", short: "l", default: "500" },
+    max: { type: "string", short: "m", default: "5" }
+  },
+  allowPositionals: true
+});
+
+const [file] = positionals;
+if (!file) {
+  console.error("Usage: nsf <file> [--limit <n>] [--max <n>]");
+  process.exit(1);
+}
+
 const location = styleText("yellow", process.cwd());
 console.log(
   styleText(
@@ -21,11 +37,4 @@ console.log(
   )
 );
 
-prog
-  .command("npm <file>")
-  .describe("Run NPM Security fetched with a given javascript file!")
-  .option("-l, --limit", "limit of packages to fetch!", 500)
-  .option("-m, --max", "maximum concurrent download", 5)
-  .action(commands.npm);
-
-prog.parse(process.argv);
+await commands.npm(file, values);

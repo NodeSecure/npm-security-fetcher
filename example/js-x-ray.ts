@@ -6,7 +6,7 @@ import path from "node:path";
 import { tarball } from "@nodesecure/scanner";
 
 // Import Internal Dependencies
-import type { RunOptions } from "../index.js";
+import type { RunOptions } from "../index.ts";
 
 type Context = {
   outdir: string;
@@ -32,7 +32,7 @@ export async function run(
 
   try {
     console.log(`handle package name: ${name}, count: ${ctx.count++}`);
-    const result = await tarball.scanPackage(location, name);
+    const result = await tarball.scanPackage(location);
 
     const fileName = path.join(ctx.outdir, name.replace(/\//g, "__")) + ".json";
     await fs.writeFile(
@@ -41,6 +41,6 @@ export async function run(
     );
   }
   finally {
-    await fs.rmdir(location, { recursive: true });
+    await fs.rm(location, { recursive: true });
   }
 }

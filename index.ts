@@ -5,11 +5,10 @@ import { on, EventEmitter } from "node:events";
 
 // Import Third-party Dependencies
 import { search } from "@nodesecure/npm-registry-sdk";
-import is from "@slimio/is";
 import { Mutex } from "@openally/mutex";
 
 // Import Internal Dependencies
-import { fetchPackage } from "./src/utils.js";
+import { fetchPackage } from "./src/utils.ts";
 
 // CONSTANTS
 const kRegSearchLimit = 10;
@@ -40,10 +39,10 @@ export async function* searchPackagesByCriteria(
 ) {
   const limit = Number(options.limit) || kDefaultLimit;
   const delay = Number(options.delay) || 0;
-  const dataFetcher = is.func(options.dataFetcher)
+  const dataFetcher = typeof options.dataFetcher === "function"
     ? options.dataFetcher
     : kDefaultFetcher;
-  const criteria = is.plainObject(options.criteria)
+  const criteria = typeof options.criteria === "object" && options.criteria !== null && !Array.isArray(options.criteria)
     ? structuredClone(options.criteria)
     : kDefaultCriteria;
   let from = 0;

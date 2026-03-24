@@ -12,7 +12,7 @@ import { Mutex } from "@openally/mutex";
 import {
   searchPackagesByCriteria,
   downloadPackageOnRegistry
-} from "../../index.js";
+} from "../../index.ts";
 
 export async function npm(
   file: string,
