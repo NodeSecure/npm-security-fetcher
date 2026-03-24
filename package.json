@@ -45,8 +45,6 @@
     "@nodesecure/npm-registry-sdk": "4.5.2",
     "@nodesecure/scanner": "8.2.0",
     "@openally/mutex": "2.0.0",
-    "@slimio/is": "^2.0.0",
-    "pacote": "21.5.0",
-    "sade": "1.8.1"
+    "pacote": "21.5.0"
   }
 }
